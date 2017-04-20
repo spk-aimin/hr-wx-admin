@@ -15,16 +15,21 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next)=>{
-	var uInfo = userInfo.getUserInfo();
+	var uInfo = userInfo.getUserInfo()?userInfo.getUserInfo():{};
 	var uName = userInfo.getUserName();
 	var password = userInfo.getPassword();
 	if(!uInfo.id){
 		apiService.requestGet('auth/login', {username: uName, password: password})
 		.then(function(res){
 			uInfo = res.data;
-			userInfo.setUserInfo(uInfo);
-			if(to.path == "/login")
-				next({path:"/"});
+			
+			if(res.data){
+				userInfo.setUserInfo(uInfo);
+				if(to.path == "/login")
+				  next({path:"/"});
+			}else {
+				next({path: "/login"});
+			}
 		}, function(res){
 			uInfo = {};
 		})

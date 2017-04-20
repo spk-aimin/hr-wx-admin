@@ -41,7 +41,6 @@
 				.then(function(res){
 					var uInfo = res.data?res.data: {};
 					userInfo.setUserInfo(uInfo);
-					debugger
 					if(res.data){
 						userInfo.setUserName(vm.userName);
 						userInfo.setPassword(vm.password);
