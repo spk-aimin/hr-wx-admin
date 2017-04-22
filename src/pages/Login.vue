@@ -1,7 +1,7 @@
 <template>
 	<div id="login">
 			<hgroup>
-		  <h1>华润微信后台管理</h1>
+		  <h1>润华微信后台管理</h1>
 		</hgroup>
 		<form class="form">
 		  <div class="group">
@@ -37,7 +37,7 @@
 					vm.$myAlert.show('请输入密码', 'error');
 					return;
 				}
-				apiService.requestForm('auth/login', {username: vm.userName, password: vm.password})
+				apiService.requestGet('auth/login', {username: vm.userName, password: vm.password})
 				.then(function(res){
 					var uInfo = res.data?res.data: {};
 					userInfo.setUserInfo(uInfo);

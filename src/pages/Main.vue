@@ -4,13 +4,13 @@
 	    <div class="header">
 	    	<h1 class="title">润华微信管理平台</h1>
 	    	<div class="user-oper">
-	    		<span class="oper">用户名</span>
-	    		<span class="oper">退出</span>
+	    		<span class="oper">{{userInfo.name}}</span>
+	    		<span class="oper" style="cursor: pointer" @click="loginOut()">退出</span>
 	    	</div>
 	    </div>
 		<!--router-link-->
 		<div class="nav-contain">
-			<div class="nav-box" v-for="(item, index) in links">
+			<div class="nav-box" v-for="(item, index) in links" v-if="userInfo.private_ == 0 || item.userHas">
 				<div class="nav-top" @click='item.isShow = !item.isShow'>
 				    <i class="fa fa-user" :class='item.icon'></i> {{item.name}}
 				</div>
@@ -29,21 +29,34 @@
 </template>
 <script>
     import routeLink from './routeLink'
+    import {userInfo, apiService} from '@/api'
 	export default {
 		data() {
 			return {
 				links: [],
 				openIndex: 0,
-				isOpen: true
+				isOpen: true,
+				userInfo: userInfo.getUserInfo()
 			}
 		},
 		compments:{
 		},
 		created(){
 			this.links = routeLink;
+			console.log(userInfo.getUserInfo())
 		},
 		methods: {
-			
+			loginOut () {
+				var vm  = this;
+				apiService.requestGet('auth/loginOut').then(function(res){
+					debugger
+					userInfo.clearUser();
+					vm.$router.push('/login');
+
+				}, function(res){
+					this.$myAlert('退出登录失败', 'error')
+				});
+			}
 		}
 	}
 </script>

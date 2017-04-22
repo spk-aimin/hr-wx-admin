@@ -10,7 +10,7 @@
 		     <span class="el-breadcrumb__separator">/</span>
 		   </span>
 		 </div>
-		<div class="form-inline margin-top-t">
+	<!-- 	<div class="form-inline margin-top-t">
 			  <div class="form-group">
 			    <label>名称:</label>
 			    <input type="text" class="form-control" placeholder="用户名">
@@ -27,21 +27,20 @@
 			  </div>
 			  <el-button type="primary">查询</el-button>
 			  <el-button>重置</el-button>
-		</div>
+		</div> -->
 		<div class="row margin-top-t">
 			<div class="col-md-12">
-				<el-button type="primary" size="small" @click="editMenuOpen('add')">添加</el-button>
-				<el-button type="primary" size="small">查看微信菜单</el-button>
+				<!-- <el-button type="primary" size="small" @click="editMenuOpen('add')">添加</el-button> -->
+			<!-- 	<el-button type="primary" size="small">查看微信菜单</el-button>
 				<el-button type="danger" size="small">创建微信菜单</el-button>
-				<el-button type="danger" size="small">删除</el-button>
+				<el-button type="danger" size="small">删除</el-button> -->
 			</div>
 		</div>
-
 		<!--列表数据-->
 		<table class="table margin-top-t table-bordered">
 			<thead>
 				<tr class="th">
-					<th width="5%"><el-checkbox>全选</el-checkbox></th>
+					<!-- <th width="5%"><el-checkbox>全选</el-checkbox></th> -->
 					<th>名称</th>
 					<th>类型</th>
 					<th>键值</th>
@@ -53,7 +52,7 @@
 			<tbody>
 			   <template v-for="item in listData">
 					<tr>
-						<td><el-checkbox></el-checkbox></td>
+						<!-- <td><el-checkbox></el-checkbox></td> -->
 						<td>{{item.name}}</td>
 						<td></td>
 						<td>{{item.key}}</td>
@@ -64,17 +63,17 @@
 					</tr>
 					<template v-for="ctem in item.child">
 						<tr>
-							<td><el-checkbox></el-checkbox></td>
+							<!-- <td><el-checkbox></el-checkbox></td> -->
 								<td>>>>>{{ctem.name}}</td>
-								<td>{{ctem.type}}</td>
+								<td>{{ctem.type | btnType}}</td>
 								<td>{{ctem.key}}</td>
 								<td>{{ctem.url}}</td>
 								<td>{{ctem.createTime}}</td>
 								<td>
-								  <el-button type="primary" size="small" @click="useMenufunc(1, ctem)" v-if="!ctem.forbidden">启用</el-button>	
+								  <el-button type="primary" size="small" @click="useMenufunc(1, ctem)" v-if="ctem.forbidden == 0">启用</el-button>	
 								  <el-button type="primary" size="small" @click="editMenuOpen('edit', ctem)">修改</el-button>
-								  <el-button type="danger" size="small" @click="useMenufunc(0, ctem)" v-if="ctem.forbidden">禁用</el-button>
-								  <el-button type="danger" size="small">删除</el-button>
+								  <el-button type="danger" size="small" @click="useMenufunc(0, ctem)" v-if="ctem.forbidden ==1">禁用</el-button>
+						<!-- 		  <el-button type="danger" size="small">删除</el-button> -->
 							    </td>
 							</tr>
 					</template>
@@ -98,20 +97,9 @@
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">类型</label>
 				    <div class="col-sm-8">
-				      <el-select v-model="editorParam.type" placeholder="请选择">
-					    <el-option
-					      v-for="item in menuTypes"
-					      :label="item.label"
-					      :value="item.value">
-					    </el-option>
-					  </el-select>
-				    </div>
-				  </div>
-
-				  <div class="form-group">
-				    <label class="col-sm-3 control-label">键值</label>
-				    <div class="col-sm-8">
-				      <input type="text" class="form-control" v-model="editorParam.key" placeholder="键值">
+					  <select class="form-control" v-model="editorParam.type">
+					  	<option v-for="item in menuTypes" :value="item.value">{{item.label}}</option>
+					  </select>
 				    </div>
 				  </div>
 				  <div class="form-group">
@@ -122,8 +110,8 @@
 				  </div>
 		      </div>
 			  <span slot="footer" class="dialog-footer">
-			    <el-button @click="cancelMenu()">取 消</el-button>
 			    <el-button type="primary" @click="saveMenu()">确 定</el-button>
+			    <el-button @click="cancelMenu()">取 消</el-button>
 			  </span>
 		</el-dialog>
 	</div>
@@ -135,10 +123,12 @@
 			return {
 				value:"",
 				pageNum: 1,
-				menuTypes: [{label:1, value: 1},{label:2, value: 2},{label:3, value: 3},{label:4, value: 4}],
+				menuTypes: [{label:'VIEW', value: '1'},{label:'CLICK', value: '2'}],
 				listData: [],
 				editorType:"",
-				editorParam: {},
+				editorParam: {
+					type: 1
+				},
 				mTitle: "添加公共菜单"
 			}
 		},
@@ -195,6 +185,7 @@
 					});
 			},
 			getAllMenu(){//获取所有列表
+				var vm =this;
 				apiService.requestGet('admin/getAllMenu').then(function(res){
 					vm.listData = res.data;
 				}, function(res){
@@ -223,6 +214,11 @@
 		created(){
 			var vm = this;
 			vm.getAllMenu();
+		},
+		filters: {
+			btnType(val){
+				return {1: 'VIEW', 2: 'CLICK'}[val];
+			}
 		}
 	}
 </script>

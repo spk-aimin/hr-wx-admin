@@ -3,6 +3,7 @@ const routeLink = [{
 	icon: 'fa-user',
 	name: '个人中心',
 	isShow: false,
+	userHas: true,
 	children: [{
 		icon: '',
 		name: '修改密码',
@@ -12,6 +13,7 @@ const routeLink = [{
 	icon: 'fa-briefcase',
 	name: '菜单管理',
 	isShow: false,
+	userHas: true,
 	children: [{
 		icon: '',
 		name: '公共菜单',
@@ -21,6 +23,7 @@ const routeLink = [{
 	icon: 'fa-book',
 	name: '内容管理',
 	isShow: false,
+	userHas: true,
 	children: [{
 		icon: '',
 		name: '新闻管理',
@@ -30,6 +33,7 @@ const routeLink = [{
 	icon: 'fa-user-circle',
 	name: '用户管理',
 	isShow: false,
+	userHas: false,
 	children: [{
 		icon: '',
 		name: '添加用户',

@@ -13,25 +13,22 @@
 		<div class="form-inline margin-top-t">
 			  <div class="form-group">
 			    <label>标题:</label>
-			    <input type="text" class="form-control" placeholder="用户名">
+			    <input type="text" class="form-control" placeholder="标题" v-model="listParamApk.title">
 			  </div>
 			  <div class="form-group">
 			    <label>菜单:</label>
-			     <el-select v-model="value" placeholder="请选择">
-					    <el-option
-					      v-for="item in options"
-					      :label="item.label"
-					      :value="item.value">
-					    </el-option>
-				 </el-select>
+			    <select class="form-control" v-model='listParamApk.itemid'>
+			    	<option value="">请选择</option>
+			    	<option v-for = "item in menus" :value="item.id">{{item.name}}</option>
+			    </select>
 			  </div>
-			  <el-button type="primary">查询</el-button>
-			  <el-button>重置</el-button>
+			  <el-button type="primary" @click="searchBy()">查询</el-button>
+			  <el-button @click="resetBy()">重置</el-button>
 		</div>
 		<div class="row margin-top-t">
 			<div class="col-md-12">
 				<el-button type="primary" size="small" @click="newContent()">新增</el-button>
-				<el-button type="danger" size="small">删除</el-button>
+				<!-- <el-button type="danger" size="small">删除</el-button> -->
 			</div>
 		</div>
 
@@ -39,7 +36,7 @@
 		<table class="table margin-top-t table-bordered">
 			<thead>
 				<tr class="th">
-					<th><el-checkbox>全选</el-checkbox></th>
+				<!-- 	<th><el-checkbox>全选</el-checkbox></th> -->
 					<th>标题</th>
 					<th>菜单</th>
 					<th>发布时间</th>
@@ -47,27 +44,20 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td><el-checkbox></el-checkbox></td>
-					<td>张三</td>
-					<td></td>
-					<td></td>
+				<tr v-for="item in listResult.articleList">
+					<!-- <td><el-checkbox></el-checkbox></td> -->
+					<td>{{item.title}}</td>
+					<td>{{item.itemName}}</td>
+					<td>{{item.createTime}}</td>
 					<td>
-					  <el-button type="primary" size="small">修改</el-button>	
-					  <el-button type="danger" size="small">删除</el-button>
+					  <el-button type="primary" size="small" @click="editorContent(item)">修改</el-button>	
+					<!--   <el-button type="danger" size="small">删除</el-button> -->
 				    </td>
-				</tr>
-				<tr>
-					<td><el-checkbox></el-checkbox></td>
-					<td>张三</td>
-					<td></td>
-					<td></td>
-					<td></td>
 				</tr>
 			</tbody>
 		</table>
 		<div class="page-cli">
-		  <el-pagination ref ="pageN" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-size="100" layout="total, prev, pager, next" :total="1000"></el-pagination>
+		  <el-pagination ref ="pageN" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listParam.pageNum" :page-size="15" layout="total, prev, pager, next" :total="listResult.pagenum"></el-pagination>
         </div>
 
         <!--添加用户-->
@@ -113,12 +103,25 @@
 	</div>
 </template>
 <script>
+    import {apiService,userInfo} from "@/api"
 	export default {
 		data(){
 			return {
 				pageNum: 1,
-				options: [],
-				value:""
+				menus: [],
+				value:"",
+				listParam: {
+					page: 0,
+					itemid: "",
+					title: "",
+					size: 15
+				},
+				listParamApk: {
+					page: 1,
+					itemid: "",
+					title: ""
+				},
+				listResult: {}
 			}
 		},
 		methods: {
@@ -126,11 +129,56 @@
 
 			},
 			handleCurrentChange(val){
-
+				var vm = this;
+				vm.listParamApk.pageNum = val;
+				listParam.pageNum = val -1;
+				vm.articleList();
 			},
 			newContent(){
 				this.$router.push("/content/newsContent")
+			},
+			articleList() {
+				var vm = this;
+				apiService.requestGet("admin/searchArticle", vm.listParam)
+				  .then(function(res){
+				  	vm.listResult = res.data;
+				  }, function(res){
+				  	this.$myAlert.show("数据请求失败", 'error')
+				  })
+
+			},
+			editorContent(obj) {
+				this.$router.push({name: 'content.newsContent', query: {id: obj.id}});
+			},
+			searchBy(){
+				var vm = this;
+				vm.listParam = {
+					page: 0,
+					itemid: vm.listParamApk.itemid,
+					title: vm.listParamApk.title,
+					size: 15
+				}
+				vm.articleList()
+			},
+			resetBy(){
+				var vm = this;
+				vm.listParamApk = {
+					page: 1,
+					itemid: "",
+					title: ""
+				}
 			}
+
+		},
+		created() {
+			var vm = this;
+			vm.articleList();
+			apiService.requestGet('admin/getMenuForArticle'). then(function(res){
+				vm.menus = res.data;
+
+			}, function(res){
+
+			})
 		}
 	}
 </script>

@@ -25,6 +25,10 @@ class UserInfo {
 	getPassword(){
 		return window.localStorage.getItem("password")
 	}
+	clearUser(){
+		uInfo = {};
+		window.localStorage.clear();
+	}
 }
 
 export default new UserInfo();

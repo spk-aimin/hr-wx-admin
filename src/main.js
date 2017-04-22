@@ -14,29 +14,37 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+var expactRouter = ['user/add']
+
 router.beforeEach((to, from, next)=>{
 	var uInfo = userInfo.getUserInfo()?userInfo.getUserInfo():{};
 	var uName = userInfo.getUserName();
 	var password = userInfo.getPassword();
-	if(!uInfo.id){
+	if(!uInfo.id && uName && password){
 		apiService.requestGet('auth/login', {username: uName, password: password})
 		.then(function(res){
 			uInfo = res.data;
 			
 			if(res.data){
 				userInfo.setUserInfo(uInfo);
-				if(to.path == "/login")
+				if(to.path == "/login" || (uInfo.private_ == 1 && expactRouter.indexOf(to.path)> -1))
 				  next({path:"/"});
+				else
+					next();
 			}else {
 				next({path: "/login"});
 			}
 		}, function(res){
 			uInfo = {};
 		})
+	}else {
+		if(!uInfo.id && !uName && !password && to.path !='/login')
+		  return next({path:'/login'})
+		if(uInfo.private_ == 1 && expactRouter.indexOf(to.path)> -1)
+			return  next({path:"/"});
+		next();
 	}
-	if(!uInfo.id && !uName && !password && to.path !='/login')
-	  return next({path:'/login'})
-	next();
+
 });
 
 /*请求拦截器*/

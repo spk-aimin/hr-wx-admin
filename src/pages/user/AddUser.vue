@@ -10,7 +10,7 @@
 		     <span class="el-breadcrumb__separator">/</span>
 		   </span>
 		 </div>
-		<div class="form-inline margin-top-t">
+<!-- 		<div class="form-inline margin-top-t">
 			  <div class="form-group">
 			    <label>用户名</label>
 			    <input type="text" class="form-control" placeholder="用户名">
@@ -25,13 +25,13 @@
 			  </div>
 			  <el-button type="primary">查询</el-button>
 			  <el-button>重置</el-button>
-		</div>
+		</div> -->
 		<div class="row margin-top-t">
 			<div class="col-md-12">
 				<el-button type="primary" size="small" @click="addUser">添加</el-button>
-				<el-button type="primary" size="small">启用</el-button>
+	<!-- 			<el-button type="primary" size="small">启用</el-button>
 				<el-button type="danger" size="small">停用</el-button>
-				<el-button type="danger" size="small">删除</el-button>
+				<el-button type="danger" size="small">删除</el-button> -->
 			</div>
 		</div>
 
@@ -39,44 +39,37 @@
 		<table class="table margin-top-t table-bordered">
 			<thead>
 				<tr class="th">
-					<th><el-checkbox>全选</el-checkbox></th>
+					<!-- <th><el-checkbox>全选</el-checkbox></th> -->
 					<th>用户名</th>
-					<th>姓名</th>
+					<th>角色</th>
+					<th>密码</th>
+			<!-- 		<th>姓名</th>
 					<th>角色</th>
 					<th>手机号</th>
-					<th>邮箱</th>
+					<th>邮箱</th> -->
+					<th>创建时间</th>
 					<th style="width:25%">操作</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td><el-checkbox></el-checkbox></td>
-					<td>张三</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
+				<tr v-for="item in listResult">
+					<!-- <td><el-checkbox></el-checkbox></td> -->
+					<td>{{item.name}}</td>
+					<td>{{item.private_ | userType}}</td>
+					<td>{{item.password}}</td>
+					<td>{{item.createTime}}</td>
 					<td>
-					  <el-button type="primary" size="small">修改</el-button>	
-					  <el-button type="primary" size="small">启用</el-button>
-					  <el-button type="danger" size="small">停用</el-button>
-					  <el-button type="danger" size="small">删除</el-button>
+					  <!-- <el-button type="primary" size="small">修改</el-button> -->	
+		<!-- 			  <el-button type="primary" size="small">启用</el-button>
+					  <el-button type="danger" size="small">停用</el-button> -->
+					  <el-button type="danger" size="small" @click="delUser(item)">删除</el-button>
 				    </td>
-				</tr>
-				<tr>
-					<td><el-checkbox></el-checkbox></td>
-					<td>张三</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
 				</tr>
 			</tbody>
 		</table>
-		<div class="page-cli">
+<!-- 		<div class="page-cli">
 		  <el-pagination ref ="pageN" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-size="100" layout="total, prev, pager, next" :total="1000"></el-pagination>
-        </div>
+        </div> -->
 
         <!--添加用户-->
 		<el-dialog title="添加用户" ref="add" size="small">
@@ -141,7 +134,7 @@
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">姓名</label>
 				    <div class="col-sm-8">
-				      <input type="text" class="form-control" v-model="userParam.relname"  placeholder="用户名">
+				      <input type="text" class="form-control" v-model="userParam.realname"  placeholder="用户名">
 				    </div>
 				  </div>
 				  <div class="form-group">
@@ -152,8 +145,8 @@
 				  </div>
 				  </div>
 			    <span slot="footer" class="dialog-footer">
-				    <el-button @click="closeModelUser()">取 消</el-button>
-				    <el-button type="primary" @click="saveUser()">确 定</el-button>
+			      <el-button type="primary" @click="saveUser()">确 定</el-button>
+				  <el-button @click="closeModelUser()">取 消</el-button>
 			  </span>
 			</el-dialog>
 	</div>
@@ -167,7 +160,8 @@
 				options: [],
 				value:"",
 				userTpes: [{value: 1, label: '管理员'}, {value: 2, label: '普通用户'}],
-				userParam: {}
+				userParam: {},
+				listResult: []
 			}
 		},
 		methods: {
@@ -191,7 +185,7 @@
 					vm.$myAlert.show('请输入用户名', 'error');
 					return;
 				}
-				if(vm.$myIsEmpty(vm.userParam.relname)){
+				if(vm.$myIsEmpty(vm.userParam.realname)){
 					vm.$myAlert.show('请输入姓名', 'error');
 					return;
 				}
@@ -203,9 +197,39 @@
 				apiService.requestGet('admin/addUser', vm.userParam).then(function(res){
 					vm.$myAlert.show('操作成功', 'success');
 					vm.userParam={};
+					vm.getUsers();
+					vm.$refs.addUser.close();
 				},function(res){
 					vm.$myAlert.show('操作失败', 'error');
 				});
+			},
+			getUsers(){
+				var vm = this;
+				apiService.requestGet('admin/getAllUser').then(function(res){
+					vm.listResult = res.data;
+
+				},function(res){
+
+				})
+			},
+			delUser(obj) {
+				var vm = this;
+				apiService.requestGet('admin/deleteUser', {userid: obj.id}).then(function(res){
+					vm.$myAlert.show('操作成功', 'success');
+					vm.getUsers();
+
+				},function(res){
+					vm.$myAlert.show('操作失败', 'error');
+				})
+			}
+		},
+		created() {
+			var vm = this;
+			vm.getUsers();
+		},
+		filters:{
+			userType(val){
+				return {0: '管理员', 1: '普通用户'}[val]
 			}
 		}
 	}
