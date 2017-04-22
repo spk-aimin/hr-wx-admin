@@ -17,7 +17,7 @@
 			      <input type="text" class="form-control" v-model="content.title" placeholder="标题">
 			    </div>
 			  </div>
-		  	 <div class="form-group">
+		  	 <div class="form-group" v-if="content.menuId_">
 			    <label class="col-sm-2 control-label">类型</label>
 			    <div class="col-sm-7">
 			       <select class="form-control" v-model="content.menuId_">
@@ -116,18 +116,6 @@
 				value:"",
 				upFileUrl: "/imagefile/fileUpload",
 				content: {
-					 id: "",
-				     menuId_: "",
-				     menuId: "",
-				    title: "",
-				     description: "",
-				    summary: "",
-				    imageCoverImageId: null,
-				    readCount: "",
-				    topOrnot: 0,
-				    linkOut: "",
-				    content: "内容",
-				    titleImage:""
 				},
 				ue: {}
 			}
@@ -150,25 +138,31 @@
 				/*校验*/
 				if(vm.$myIsEmpty(vm.content.title)){
 					vm.$myAlert.show("请填写标题", 'error');
+					return;
 				}
 				if(vm.$myIsEmpty(vm.content.menuId_)){
 					vm.$myAlert.show("请选择类型", 'error');
+					return;
 				}
-			   if(vm.$myIsEmpty(vm.content.description)){
-					vm.$myAlert.show("请填写描述", 'error');
-				}
-				if(vm.$myIsEmpty(vm.content.summary)){
-					vm.$myAlert.show("请填写摘要", 'error');
-				}
-	            if(vm.$myIsEmpty(vm.content.imageCoverImageId)){
-					vm.$myAlert.show("请上传封面", 'error');
-				}
+			 //   if(vm.$myIsEmpty(vm.content.description)){
+				// 	vm.$myAlert.show("请填写描述", 'error');
+				// 	return;
+				// }
+				// if(vm.$myIsEmpty(vm.content.summary)){
+				// 	vm.$myAlert.show("请填写摘要", 'error');
+				// 	return;
+				// }
+	   //          if(vm.$myIsEmpty(vm.content.imageCoverImageId)){
+				// 	vm.$myAlert.show("请上传封面", 'error');
+				// }
 			   if(!/[0-9]{1,}$/.test(vm.content.readCount)){
-					vm.$myAlert.show("请填写正确的阅读量", 'error');
+					//vm.$myAlert.show("请填写正确的阅读量", 'error');
+					vm.content.readCount = 0;
 				}
 				vm.content.content = vm.ue.getContent();
 				if(vm.$myIsEmpty(vm.content.content)){
 					vm.$myAlert.show("请填写内容", 'error');
+					return;
 				}
 				if(vm.id){
 					apiService.requestPost("admin/updateArticle", vm.content).then(function(res){
