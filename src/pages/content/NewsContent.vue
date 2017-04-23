@@ -17,7 +17,7 @@
 			      <input type="text" class="form-control" v-model="content.title" placeholder="标题">
 			    </div>
 			  </div>
-		  	 <div class="form-group" v-if="content.menuId_">
+		  	 <div class="form-group">
 			    <label class="col-sm-2 control-label">类型</label>
 			    <div class="col-sm-7">
 			       <select class="form-control" v-model="content.menuId_">
@@ -60,7 +60,7 @@
 					  multiple>
 					  <i class="el-icon-upload"></i>
 					  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-					  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+					  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件</div>
 					</el-upload>
 					<div class="up-img-view">
 						<img :src="content.titleImage">
@@ -116,6 +116,8 @@
 				value:"",
 				upFileUrl: "/imagefile/fileUpload",
 				content: {
+					menuId_: "",
+					topOrnot: 0
 				},
 				ue: {}
 			}
@@ -124,7 +126,7 @@
 			fmUpSuc(response){
 				var vm  = this;
 				console.log(response);
-				vm.content.imageCoverImageId = response.data.id;
+				vm.content.imageId = response.data.id;
 				vm.content.titleImage = response.data.imagePath;
 			},
 			fmUpfal(error){

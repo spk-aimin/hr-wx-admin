@@ -46,16 +46,23 @@ router.beforeEach((to, from, next)=>{
 	}
 
 });
-
+var app;
 /*请求拦截器*/
 Vue.http.interceptors.push(function(request, next) {
   let loadingInstance1 = Loading.service({ fullscreen: true });
   next(function(response) {
+
   	loadingInstance1.close();
+  	var data = response.data? response.data: {};
+  	 if(data.code== undefined || data.code == 10001){
+  	   userInfo.clearUser();
+  	   app.$router.push('/login');
+  	}
+  	//vm.$router.push('/login')
   });
 })
 /* eslint-disable no-new */
-var app = new Vue({
+app = new Vue({
   el: '#app',
   router,
   template: '<App/>',
