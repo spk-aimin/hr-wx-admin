@@ -57,7 +57,7 @@
 			</tbody>
 		</table>
 		<div class="page-cli">
-		  <el-pagination ref ="pageN" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listParam.pageNum" :page-size="15" layout="total, prev, pager, next" :total="listResult.pagenum"></el-pagination>
+		  <el-pagination ref ="pageN" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listParamApk.page" :page-size="15" layout="total, prev, pager, next" :total="listResult.pagenum"></el-pagination>
         </div>
 
         <!--添加用户-->
@@ -130,8 +130,8 @@
 			},
 			handleCurrentChange(val){
 				var vm = this;
-				vm.listParamApk.pageNum = val;
-				listParam.pageNum = val -1;
+				vm.listParamApk.page = val;
+				vm.listParam.page = val -1;
 				vm.articleList();
 			},
 			newContent(){
