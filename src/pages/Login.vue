@@ -45,6 +45,8 @@
 						userInfo.setUserName(vm.userName);
 						userInfo.setPassword(vm.password);
 						vm.$router.push('/');
+					}else {
+						vm.$myAlert.show('您输入的用户名密码有误', 'error');
 					}
 				}, function(res){
 					uInfo = {};
