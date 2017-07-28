@@ -28,6 +28,7 @@
 		methods: {
 			login() {
 				var vm =this;
+				var uInfo;
 
 				if(vm.userName==""){
 					vm.$myAlert.show('请输入用户名', 'error');
@@ -39,7 +40,7 @@
 				}
 				apiService.requestGet('auth/login', {username: vm.userName, password: vm.password})
 				.then(function(res){
-					var uInfo = res.data?res.data: {};
+					uInfo = res.data?res.data: {};
 					userInfo.setUserInfo(uInfo);
 					if(res.data){
 						userInfo.setUserName(vm.userName);
@@ -50,6 +51,7 @@
 					}
 				}, function(res){
 					uInfo = {};
+					vm.$myAlert.show(res.msg, 'error');
 				})
 			}
 		},

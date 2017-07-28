@@ -51,7 +51,7 @@
 					<td>{{item.createTime}}</td>
 					<td>
 					  <el-button type="primary" size="small" @click="editorContent(item)">修改</el-button>	
-					<!--   <el-button type="danger" size="small">删除</el-button> -->
+					  <el-button type="danger" @click='delContent(item)' size="small">删除</el-button>
 				    </td>
 				</tr>
 			</tbody>
@@ -149,6 +149,17 @@
 			},
 			editorContent(obj) {
 				this.$router.push({name: 'content.newsContent', query: {id: obj.id}});
+			},
+			delContent(obj) {
+				var vm = this;
+				apiService.requestGet("admin/deleteArticle", {param: obj.id})
+				  .then(function(res){
+				  	//vm.listResult = res.data;
+				  	vm.$myAlert.show("删除成功", 'success');
+				  	vm.articleList();
+				  }, function(res){
+				  	vm.$myAlert.show("数据请求失败", 'error')
+				  })
 			},
 			searchBy(){
 				var vm = this;
